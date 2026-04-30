@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIRTHDAY SURPRISE App 🎉</title>
+
+ <style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+ body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  color: white;
+  overflow: hidden;
+}
+
+ .app {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* CARD */
+ .card {
+  width: 90%;
+  max-width: 350px;
+  padding: 25px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  text-align: center;
+  animation: fadeIn 1s ease;
+}
+
+ input, button {
+  width: 100%;
+  padding: 12px;
+  margin-top: 12px;
+  border-radius: 10px;
+  border: none;
+  font-size: 16px;
+}
+
+ button {
+  background: linear-gradient(45deg, #ffcc00, #ff8800);
+  font-weight: bold;
+  cursor: pointer;
+}
+
+ .screen { display: none; }
+ .active { display: block; }
+
+ #countdown {
+  font-size: 60px;
+  margin-top: 10px;
+}
+
+ #slide {
+  width: 100%;
+  border-radius: 15px;
+  margin-top: 15px;
+  transition: opacity 1s;
+}
+
+ #message {
+  margin-top: 15px;
+  min-height: 120px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+ canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
+
+ @keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+</style>
+</head>
+
+ <body>
+
+ <canvas id="bg"></canvas>
+
+ <div class="app">
+
+  <!-- 🔐 PASSWORD -->
+  <div id="lock" class="card screen active">
+  <h2>Bestie Access 😎</h2>
+  <input type="password" id="pass" placeholder="Enter secret code">
+  <button onclick="check()">Unlock</button>
+  <p id="error"></p>
+  </div>
+
+  <!-- 🎁 START -->
+  <div id="start" class="card screen">
+  <h2>Ready? 🎉</h2>
+  <button onclick="start()">Start Surprise🎉</button>
+  </div>
+
+<!-- ⏳ COUNTDOWN -->
+<div id="count" class="card screen">
+  <h2>Get Ready 😊</h2>
+  <div id="countdown"></div>
+</div>
+
+<!-- 🎉 MAIN -->
+<div id="main" class="card screen">
+  <h1>Happy Birthday NAVYA 🎂🎉</h1>
+
+  <div id="message"></div>
+
+  <div id="slideshow" style="display:none;">
+    <img id="slide" src="photo1.jpg">
+  </div>
+</div>
+
+<!-- 🎉 END SCREEN -->
+<div id="end" class="card screen">
+  <h1>THE END 🎉</h1>
+  <p>Your the Best Person I ever meet in my Life 🤗</p>
+</div>
+
+<audio id="music" src="song.mp3"></audio>
+
+</div>
+
+<script>
+
+/* 🔐 PASSWORD */
+const password = "01092024";
+
+function check() {
+  let val = document.getElementById("pass").value;
+  if (val === password) switchScreen("lock","start");
+  else document.getElementById("error").innerText="Fake bestie detected 😏";
+}
+
+/* SCREEN SWITCH */
+function switchScreen(a,b){
+  document.getElementById(a).classList.remove("active");
+  document.getElementById(b).classList.add("active");
+}
+
+/* 🎁 START */
+function start(){
+  switchScreen("start","count");
+
+  let c=3;
+  let el=document.getElementById("countdown");
+
+  let i=setInterval(()=>{
+    el.innerText=c;
+    c--;
+    if(c<0){
+      clearInterval(i);
+      switchScreen("count","main");
+      playMusic();
+      showMessageFirst();
+    }
+  },1000);
+}
+
+/* 🎵 MUSIC FADE */
+function playMusic(){
+  let m=document.getElementById("music");
+  m.volume=0;
+  m.play();
+
+  let v=0;
+  let fade=setInterval(()=>{
+    if(v<1){
+      v+=0.05;
+      m.volume=v;
+    } else clearInterval(fade);
+  },200);
+}
+
+  /* 💬 MESSAGE WITH FADE OUT */
+function showMessageFirst(){
+
+let text = `Oye 😄
+Another year older... still same idiot 😂
+Thanks for all crazy memories 💯
+Life is honestly more fun because of you ✨
+Don't ever change,
+Stay the same forever ❤️,
+Happy Birthday FRIEND 🎂🎉`;
+
+let msg = document.getElementById("message");
+msg.innerHTML = "";
+
+let lines = text.split("\n");
+let i = 0;
+
+function showLine(){
+  if(i < lines.length){
+    let p = document.createElement("p");
+    p.innerText = lines[i];
+
+    p.style.marginBottom = "10px";
+    p.style.opacity = "0";
+    p.style.transition = "0.5s";
+
+    msg.appendChild(p);
+
+    setTimeout(() => {
+      p.style.opacity = "1";
+    }, 50);
+
+    i++;
+    setTimeout(showLine, 900);
+  } else {
+
+    setTimeout(() => {
+
+      msg.style.transition = "1s";
+      msg.style.opacity = "0";
+
+      setTimeout(() => {
+        msg.style.display = "none";
+        startSlideshow();
+      }, 1000);
+
+    }, 15000);
+  }
+}
+
+  showLine();
+}
+
+ /* 🖼️ SLIDESHOW ONCE */
+function startSlideshow(){
+  document.getElementById("slideshow").style.display = "block";
+
+  let imgs = ["photo1.jpg","photo2.jpg","photo3.jpg","photo4.jpg","photo5.jpg"];
+  let img = document.getElementById("slide");
+
+  let i = 0;
+
+  function showNext(){
+    if(i < imgs.length){
+      img.style.opacity = 0;
+
+      setTimeout(()=>{
+        img.src = imgs[i];
+        img.style.opacity = 1;
+        i++;
+      },500);
+
+      setTimeout(showNext, 7000);
+    } else {
+      setTimeout(()=>{
+        switchScreen("main","end");
+      }, 2000);
+    }
+  }
+
+  showNext();
+}
+
+/* 🌌 BACKGROUND PARTICLES */
+const canvas=document.getElementById("bg");
+const ctx=canvas.getContext("2d");
+
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let particles=[];
+
+for(let i=0;i<80;i++){
+  particles.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    r:Math.random()*2
+  });
+}
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="white";
+
+  particles.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fill();
+
+    p.y+=0.5;
+    if(p.y>canvas.height) p.y=0;
+  });
+
+  requestAnimationFrame(animate);
+}
+animate();
+
+</script>
+
+</body>
+</html>
